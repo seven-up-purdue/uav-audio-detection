@@ -1,0 +1,2 @@
+model_checkpoint_path: "/Users/bowonyang/workspace/new-uav/models/my_test_model2"
+all_model_checkpoint_paths: "/Users/bowonyang/workspace/new-uav/models/my_test_model2"
