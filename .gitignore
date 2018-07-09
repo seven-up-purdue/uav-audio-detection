@@ -127,5 +127,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#
+data/
+
 
 # End of https://www.gitignore.io/api/macos,windows,pycharm,jupyternotebook
