@@ -1,0 +1,7 @@
+NAME: test
+WAV_PATH: '../data/test_0617.wav'
+MODEL_TYPE: nn
+MODEL_PATH: '../models/my_test_model'
+FEATURE_TYPE: mfcc
+SERVER_ADDRESS: '192.168.1.4:8090'
+BUFFER_HOURS: 1
