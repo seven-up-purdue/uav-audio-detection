@@ -9,8 +9,8 @@ import tornado.gen
 
 import json
 
-# WEB_SERVER_ADDRESS = ('localhost', 8090)
-WEB_SERVER_ADDRESS = ('0.0.0.0', 8090)
+WEB_SERVER_ADDRESS = ('localhost', 8090)
+# WEB_SERVER_ADDRESS = ('0.0.0.0', 8090)
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):

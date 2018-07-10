@@ -9,6 +9,7 @@ import json
 import tensorflow as tf
 import librosa
 from util.config import Config
+from util.model import Model
 
 ##### Fixed configuration #####
 CHUNK_SIZE = 8192
