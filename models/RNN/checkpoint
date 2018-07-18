@@ -1,2 +1,2 @@
-model_checkpoint_path: "my_RNN_model_500"
-all_model_checkpoint_paths: "my_RNN_model_500"
+model_checkpoint_path: "my_RNN_model_S9_40"
+all_model_checkpoint_paths: "my_RNN_model_S9_40"
