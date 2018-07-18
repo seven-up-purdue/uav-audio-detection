@@ -4,15 +4,12 @@ import glob
 
 class Sound(object):
 
-    # Variable
-    #raw = []    # For raw data
-
     # Constructor
     def __init__(self, path = None, extension = None):
-        self.raw = []
+        self.raw = []               # Get sound data
         self.path = path            # Get data path
         self.extension = extension  # Get data extension
-        self.dataNames = glob.glob(self.path + "*." + self.extension)
+        self.dataNames = glob.glob(self.path + "*." + self.extension)  # Make name package
         print(self.path)        # For debugging
         print(self.extension)   # For debugging
 
