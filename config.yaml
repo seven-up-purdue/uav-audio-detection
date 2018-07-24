@@ -1,7 +1,7 @@
-NAME: test
-WAV_PATH: '../data/test_0617.wav'
-MODEL_TYPE: nn
-MODEL_PATH: '../models/my_test_model'
+NAME: cnn_test
+WAV_PATH: '../data/'
+MODEL_TYPE: cnn
+MODEL_PATH: '../models/cnn/cnn'
 FEATURE_TYPE: mfcc
 SERVER_ADDRESS: '127.0.0.1:8090'
 BUFFER_HOURS: 1
