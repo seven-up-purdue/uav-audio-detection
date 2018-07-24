@@ -1,3 +1,4 @@
+import pyloudness as ld
 import numpy as np
 import librosa
 import glob
@@ -40,21 +41,22 @@ class Sound(object):
             print(i, "Cut sound is made")
             # print("cutSound[", i, "]shape: ", self.cutSound[i].shape)
             self.cutSound = np.hstack((self.cutSound, self.raw[i]))
-
+        # Data Normalization
+        self.cutSound = librosa.util.normalize(self.cutSound)
 
     # Preprocess for get feature of data
     def preProcess(self):
-        self.mfcc = [] # Feature data
+        self.mfcc = [[]] * 20 # Feature data
         mask = int(self.sr / 5)
         print("Mask: ", mask)
-        for i in range(0, self.cutting + 1 - mask): # self.sr/5 => 1/5 sec
+        for i in range(0, self.cutting + 1 - mask, 2205): # self.sr/5 => 1/5 sec
             # Cut as
-            buf = self.cutSound[0][i:i + mask]
+            buf = self.cutSound[i:i + mask]
             buf = librosa.feature.mfcc(buf)
             self.mfcc = np.hstack((self.mfcc, buf))
             print(i, " MFCC is made")
-            print("mfcc[", i, "] shape: ", self.mfcc[i].shape)
-
+            print("mfcc[", i, "] shape: ", self.mfcc.shape)
+        print(i, " MFCC is made")
 
 
     # process data
