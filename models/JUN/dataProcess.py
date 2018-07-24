@@ -1,3 +1,4 @@
+import numpy as np
 import librosa
 import glob
 #import matplotlib.pyplot as plt
@@ -30,20 +31,31 @@ class Sound(object):
         # data is cut by Sampling Rate multiple
         for i in range(self.dataNum):
             tmp = len(self.raw[i])
-            cutting = 0
+            self.cutting = 0
             while tmp > self.sr:
                 tmp -= self.sr
-                cutting += self.sr
-            self.cutSound.append(self.raw[i][:cutting])
-            self.mfcc.append(librosa.feature.mfcc(self.cutSound[i]))
+                self.cutting += self.sr
+            self.raw[i] = self.raw[i][:self.cutting]
+            # self.cutSound.append(self.raw[i][:self.cutting])
             print(i, "Cut sound is made")
-            print("cutSound[", i, "]shape: ", self.cutSound[i].shape)
-            print(i, " MFCC is made")
-            print("mfcc[", i, "] shape: ", self.mfcc[i].shape)
+            # print("cutSound[", i, "]shape: ", self.cutSound[i].shape)
+            self.cutSound = np.hstack((self.cutSound, self.raw[i]))
+
 
     # Preprocess for get feature of data
     def preProcess(self):
         self.mfcc = [] # Feature data
+        mask = int(self.sr / 5)
+        print("Mask: ", mask)
+        for i in range(0, self.cutting + 1 - mask): # self.sr/5 => 1/5 sec
+            # Cut as
+            buf = self.cutSound[0][i:i + mask]
+            buf = librosa.feature.mfcc(buf)
+            self.mfcc = np.hstack((self.mfcc, buf))
+            print(i, " MFCC is made")
+            print("mfcc[", i, "] shape: ", self.mfcc[i].shape)
+
+
 
     # process data
     # Method:
