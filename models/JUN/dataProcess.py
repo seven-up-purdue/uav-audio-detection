@@ -1,7 +1,8 @@
-import pyloudness as ld
 import numpy as np
 import librosa
+import librosa.display
 import glob
+import scipy.fftpack as fp
 #import matplotlib.pyplot as plt
 
 class Sound(object):
@@ -46,17 +47,18 @@ class Sound(object):
 
     # Preprocess for get feature of data
     def preProcess(self):
-        self.mfcc = [[]] * 20 # Feature data
+        self.fft = []
         mask = int(self.sr / 5)
         print("Mask: ", mask)
         for i in range(0, self.cutting + 1 - mask, 2205): # self.sr/5 => 1/5 sec
             # Cut as
             buf = self.cutSound[i:i + mask]
-            buf = librosa.feature.mfcc(buf)
-            self.mfcc = np.hstack((self.mfcc, buf))
-            print(i, " MFCC is made")
-            print("mfcc[", i, "] shape: ", self.mfcc.shape)
-        print(i, " MFCC is made")
+            buf = np.fft.fft(buf)
+            print(i, "th fft file is made")
+            print("FFT file shape: ", len(buf))
+            self.fft.append(buf)
+        print(i, "number of FFT file is made")
+        return self.fft
 
 
     # process data
