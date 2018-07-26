@@ -1,11 +1,18 @@
 from dataProcess import Sound
 
 def main():
-    load = Sound("../../soundData/0720A/load/", "wav")
-    load.load()
-    unload = Sound("../../soundData/0720A/unload/", "wav")
-    unload.load()
-
+    if True:
+        load = Sound("../../soundData/0720A/load/", "wav")
+        load.load()
+        load.dataCutting()
+        load.preProcess()
+        """
+        unload = Sound("../../soundData/0720A/unload/", "wav")
+        unload.load()
+        unload.dataCutting()
+        """
+    else:
+        print("Fail")
 
     return
 
