@@ -9,8 +9,17 @@ import datetime
 import wave
 import numpy as np 
 import sys
+import RPi.GPIO as GPIO
+import threading
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT)
+save_interval = 0.1
+alive_interval = 0.1
+
 #chunk_num = 180 # 1Minute
-def getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 180, isWrite=False):  
+def getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 10, isWrite=False):  
    AUDIO_FORMAT = pyaudio.paInt16
    SAMPLE_RATE = sample_rate
    CHUNK_SIZE = chunk_size
@@ -20,7 +29,7 @@ def getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 180, isWrite=Fa
    
  
    while(True):
-       WAVE_FILENAME = './Record/'+datetime.datetime.now().strftime('%m-%d %H_%M_%S')+'.wav'
+       WAVE_FILENAME = '../../Record/'+datetime.datetime.now().strftime('%m-%d %H_%M_%S')+'.wav'
        stream = p.open(format=AUDIO_FORMAT, channels=1, rate=SAMPLE_RATE,
    input=True, frames_per_buffer=CHUNK_SIZE)
        frame = []  
@@ -29,6 +38,8 @@ def getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 180, isWrite=Fa
        for i in range(CHUNK_NUM):
            frame.append(stream.read(CHUNK_SIZE,exception_on_overflow = False))
            cn+=1
+           t = threading.Thread(target = alive_LED, args=())
+           t.start()
            
        frame = b''.join(frame)
        audio = np.fromstring(frame, np.int16)
@@ -42,8 +53,32 @@ def getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 180, isWrite=Fa
        wf.setframerate(SAMPLE_RATE)
        wf.writeframes(b''.join(audio))
        print("time: %.4f \t"%(t2-t1),end='')
-       
        stream.stop_stream()
        stream.close()
+       t = threading.Thread(target = save_LED, args=())
+       t.start()
 
+
+def save_LED():
+    try:
+        for i in range(3):
+            GPIO.output(24, True)
+            time.sleep(save_interval)
+            print('s',end='')
+            GPIO.output(24, False)
+            time.sleep(save_interval)
+        
+    except keyboardInterrupt:
+        GPIO.cleanup()
+        
+def alive_LED():
+    try:
+        GPIO.output(23, True)
+        time.sleep(alive_interval)
+        print('a',end='')
+        GPIO.output(23, False)
+        time.sleep(alive_interval)
+        
+    except keyboardInterrupt:
+        GPIO.cleanup()        
 getStream()
