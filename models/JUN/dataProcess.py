@@ -19,7 +19,8 @@ class Sound(object):
         print("Data number: ", self.dataNum)    # For debugging
 
     # Load raw data & attach to one chunk
-    def load(self):
+    def load(self, label):
+        self.label = label                      # label data
         for i in range(self.dataNum):
             buf, self.sr = librosa.load(self.dataNames.pop(0))  # Get raw data and sampling rate
             self.raw.append(buf)    # Collect data as one array
@@ -58,4 +59,5 @@ class Sound(object):
             print("FFT file shape: ", len(buf))
             self.fft.append(buf)
         print(i, "number of FFT file is made")
-        return self.fft
+        self.label = [self.label] * len(self.fft)
+        return self.fft, self.label
