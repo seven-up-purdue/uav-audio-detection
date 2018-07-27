@@ -14,9 +14,9 @@ class Sound(object):
         self.extension = extension  # Get data extension
         self.dataNames = glob.glob(self.path + "*." + self.extension)  # Make name package
         self.dataNum = self.dataNames.__len__() # Get data number
-        print("Data path: ", self.path)        # For debugging
-        print("Extension: ", self.extension)   # For debugging
-        print("Data number: ", self.dataNum)   # For debugging
+        print("Data path: ", self.path)         # For debugging
+        print("Extension: ", self.extension)    # For debugging
+        print("Data number: ", self.dataNum)    # For debugging
 
     # Load raw data & attach to one chunk
     def load(self):
@@ -42,30 +42,20 @@ class Sound(object):
             print(i, "Cut sound is made")
             # print("cutSound[", i, "]shape: ", self.cutSound[i].shape)
             self.cutSound = np.hstack((self.cutSound, self.raw[i]))
+
+    # Preprocess Work: Normalize data
+    # Preprocess for get feature of data
+    def Process(self):
+        self.fft = []
+        mask = int(self.sr / 5)     # Mask size: 4410
+        print("Mask: ", mask)       # Time slice: 0.2 sec
         # Data Normalization
         self.cutSound = librosa.util.normalize(self.cutSound)
-
-    # Preprocess for get feature of data
-    def preProcess(self):
-        self.fft = []
-        mask = int(self.sr / 5)
-        print("Mask: ", mask)
-        for i in range(0, self.cutting + 1 - mask, 2205): # self.sr/5 => 1/5 sec
-            # Cut as
-            buf = self.cutSound[i:i + mask]
-            buf = np.fft.fft(buf)
+        for i in range(0, self.cutting + 1 - mask, 2205):
+            buf = self.cutSound[i:i + mask]         # Cut data as mask size
+            buf = np.fft.fft(buf)                   # Apply FFT
             print(i, "th fft file is made")
             print("FFT file shape: ", len(buf))
             self.fft.append(buf)
         print(i, "number of FFT file is made")
         return self.fft
-
-
-    # process data
-    # Method:
-    def process(self, method):
-        if method == "MFCC" or "mfcc":
-            mfcc = librosa.feature.mfcc(self.raw[0], self.sr)
-            return mfcc
-        else:
-            return None
