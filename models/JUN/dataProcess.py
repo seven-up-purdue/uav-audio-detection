@@ -46,13 +46,14 @@ class Sound(object):
 
     # Preprocess Work: Normalize data
     # Preprocess for get feature of data
-    def Process(self):
+    def Process(self, MASK):
         self.fft = []
-        mask = int(self.sr / 5)     # Mask size: 4410
-        print("Mask: ", mask)       # Time slice: 0.2 sec
+        hop = round(MASK/2)
+        mask = int(MASK)        # Mask size: mask from inpu
+        print("Mask: ", mask)   # Time slice: 0.2 sec
         # Data Normalization
         self.cutSound = librosa.util.normalize(self.cutSound)
-        for i in range(0, self.cutting + 1 - mask, 2205):
+        for i in range(0, self.cutting + 1 - mask, hop):
             buf = self.cutSound[i:i + mask]         # Cut data as mask size
             buf = np.fft.fft(buf)                   # Apply FFT
             print(i, "th fft file is made")
