@@ -1,11 +1,6 @@
 '''
 @@@사용 예시@@@
-from myAudio import Audio
-import pyaudio
-import time
-import wave
-import numpy as np
-import librosa
+from myAudio import *
 
 Audio.getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 1, isWrite=True)
 '''
@@ -16,6 +11,8 @@ import wave
 import numpy as np
 
 import librosa
+
+test_var = 123
 class Audio:
     def __init__(self ):
         print('hi')
