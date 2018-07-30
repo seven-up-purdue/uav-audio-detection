@@ -23,39 +23,75 @@ def mfcc4(raw, chunk_size=8192, window_size=4096, sr=22050, n_mfcc=16, n_frame=1
         mfcc_slice = mfcc_slice.reshape((1, mfcc_slice.shape[0], mfcc_slice.shape[1]))
         mfcc = np.vstack((mfcc, mfcc_slice))
     return mfcc
+def mfcc(raw, chunk_size=8192, sr=22050, n_mfcc=13):
+    mfcc = np.empty((13, 0))
+    for i in range(0, len(raw), chunk_size):
+        mfcc_slice = librosa.feature.mfcc(raw[i:i+chunk_size], sr=sr, n_mfcc=n_mfcc)
+        mfcc = np.hstack((mfcc, mfcc_slice))
+    return mfcc
+def makeHot(dataX, seq_length):
+    X_hot_list= []
+    #Y_hot_tmp = dataY[seq_length-1:]
+
+    for i in range(0, dataX.shape[0] - seq_length+1):
+        _x = dataX[i:i + seq_length]
+        #if i<10:
+            #print(_x, "->", Y_hot_tmp[i])
+        X_hot_list.append(_x)
+
+    X_hot = np.array(X_hot_list[:])
+    #Y_hot= Y_hot_tmp.reshape((len(Y_hot_tmp),n_unique_labels))
+    return X_hot[:]#, Y_hot[:]
+class Data:
+    def __init__(self,X,Y,BatchSize):
+        self.X = X
+        self.Y = Y
+        self.len = len(Y)
+        self.bs = BatchSize
+        self.bs_i = 0
+    def getBatchData(self):
+        s = self.bs_i
+        e = self.bs_i + self.bs
+        if e> self.len:
+            e -= self.len
+            result =  np.vstack((self.X[s:],self.X[:e])), np.vstack((self.Y[s:],self.Y[:e]))
+        else:
+            result =  self.X[s:e], self.Y[s:e]
+            
+        self.bs_i = e
+        return result
 ###########################################   Model   #########################################
-n_mfcc = 16
-n_frame = 16
-n_classes = 3
-n_channels = 1
+n_unique_labels = 3
+seq_length = 16 #layer
+batch_size = 2048
+batch_size = batch_size
+num_classes = 13            #분류할 사전의 크기 
 
-kernel_size = 3
-stride = 1
-pad = "SAME"
+learning_rate = 0.01
+sequence_length = seq_length #9         
 
-learning_rate = 0.005
-training_epochs = 20
+output_dim = n_unique_labels
+layers = 3
+X = tf.placeholder(tf.float32, [None, sequence_length,num_classes], name="X")
+Y = tf.placeholder(tf.float32, [None, output_dim], name="Y")
 
-X = tf.placeholder(tf.float32, shape=[None,n_mfcc*n_frame*n_channels])
-X = tf.reshape(X, [-1, n_mfcc, n_frame, n_channels])
-Y = tf.placeholder(tf.float32, shape=[None,n_classes])
+cell = tf.contrib.rnn.BasicLSTMCell(num_units=num_classes, state_is_tuple=True)
+cell = tf.contrib.rnn.MultiRNNCell([cell]*layers, state_is_tuple= True)
 
-conv1 = tf.layers.conv2d(inputs=X, filters=1, kernel_size=[3, 3],
-                         padding="SAME", activation=tf.nn.relu)
-pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2],
-                                padding="SAME", strides=1)
-#dropout1 = tf.layers.dropout(inputs=pool1, rate=0.7, training=True)
+BatchSize = tf.placeholder(tf.int32, [], name='BatchSize')
+initial_state = cell.zero_state(BatchSize, tf.float32)
+outputs, _states = tf.nn.dynamic_rnn(cell, X,initial_state=initial_state,dtype=tf.float32)
 
-flat = tf.reshape(pool1, [-1, 16*16*1])
+dense1 = tf.contrib.layers.fully_connected(outputs[:,-1], output_dim, activation_fn=None)
+dense2 = tf.layers.dense(inputs=dense1, units=num_classes, activation=tf.nn.relu)
 
-dense2 = tf.layers.dense(inputs=flat, units=625, activation=tf.nn.relu)
-#dropout2 = tf.layers.dropout(inputs=dense2, rate=0.5, training=True)
-logits = tf.layers.dense(inputs=dense2, units=3)
+Y_pred= tf.layers.dense(inputs=dense2, units=output_dim)
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=Y_pred, labels=Y))
+lr = tf.placeholder(tf.float32,shape=(), name='learning_rate')
+train = tf.train.AdamOptimizer(lr).minimize(cost)
 
-#cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=Y))
-#optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 ######################################################################################################
 sess = tf.Session()
 saver = tf.train.Saver()
-# 재성이 형 여기 모델 불러오는 path
-saver.restore(sess, '../models/CNN/my_test_model_cnn')
+
+saver.restore(sess, '../models/RNN/my_RNN_model')
