@@ -1,28 +1,14 @@
-
-# coding: utf-8
-
-# In[2]:
-
-
 import numpy as np
 import librosa
 import tensorflow as tf
 import glob
 from myAudio import Audio
 
-
-# In[7]:
-
-
 n_mfcc = 16
 n_frame = 16
 n_classes = 3
 n_channels = 1
 learning_rate = 0.0002
-
-
-# In[4]:
-
 
 #### MFCC4 Model ###
 def mfcc4(raw, chunk_size=8192, window_size=4096, sr=44100, n_mfcc=16, n_frame=16):
@@ -39,20 +25,12 @@ def mfcc4(raw, chunk_size=8192, window_size=4096, sr=44100, n_mfcc=16, n_frame=1
     y = np.array(y)
     return mfcc
 
-
-# In[5]:
-
-
 def extraction(raw):
     soundData = mfcc4(raw)
     dataX = np.reshape(soundData, (soundData.shape[0], -1))
     print("X: ", dataX.shape)
     print("Extract feature is finished")
     return dataX
-
-
-# In[8]:
-
 
 ###########################################   CNN Model   #########################################
 X = tf.placeholder(tf.float32, shape=[None,n_mfcc*n_frame*n_channels])
@@ -78,18 +56,10 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, 
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 ###################################################################################################
 
-
-# In[9]:
-
-
 ### Model loading part ###
 sess = tf.Session()
 saver = tf.train.Saver()
 saver.restore(sess, './cnnmodel')
-
-
-# In[10]:
-
 
 def getDetectionResult():
     print("Start Process")
@@ -100,4 +70,3 @@ def getDetectionResult():
     y_pred = sess.run(tf.argmax(logits,1),feed_dict={X: dataX, keep_prob: 1})
     print("Process is finished")
     return y_pred
-
