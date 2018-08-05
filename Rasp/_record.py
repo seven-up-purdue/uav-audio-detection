@@ -31,7 +31,8 @@ def getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 10, isWrite=Fal
    while(True):
        WAVE_FILENAME = '../../Record/'+datetime.datetime.now().strftime('%m-%d %H_%M_%S')+'.wav'
        stream = p.open(format=AUDIO_FORMAT, channels=1, rate=SAMPLE_RATE,
-   input=True, frames_per_buffer=CHUNK_SIZE)
+        input=True, frames_per_buffer=CHUNK_SIZE, input_device_index=0, output_device_index =0 )
+        
        frame = []  
        t1 = time.time()
        cn = 0
