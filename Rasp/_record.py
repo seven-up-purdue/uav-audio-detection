@@ -19,7 +19,7 @@ save_interval = 0.1
 alive_interval = 0.1
 
 #chunk_num = 180 # 1Minute
-def getStream(sample_rate = 22050, chunk_size = 8192,chunk_num = 10, isWrite=False):  
+def getStream(sample_rate = 44100, chunk_size = 8192,chunk_num = 10, isWrite=False):  
    AUDIO_FORMAT = pyaudio.paInt16
    SAMPLE_RATE = sample_rate
    CHUNK_SIZE = chunk_size
