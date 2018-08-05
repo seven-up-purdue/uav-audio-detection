@@ -33,7 +33,7 @@ class Audio:
         frame = []    
         t1 = time.time()
         for i in range(CHUNK_NUM):
-            frame.append(stream.read(CHUNK_SIZE))
+            frame.append(stream.read(CHUNK_SIZE,exception_on_overflow = False))
             
         frame = b''.join(frame)
         audio = np.fromstring(frame, np.int16)
