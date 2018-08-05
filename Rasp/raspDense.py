@@ -1,10 +1,7 @@
 # Import library
-import IPython.display
-import librosa.display
 import numpy as np
 import librosa
 import tensorflow as tf
-import glob
 from myAudio import Audio
 
 # Declare Variable
@@ -17,9 +14,8 @@ learning_rate = 0.0002
 
 # Function Part
 # Feature extraction Method: MFCC
-def mfcc4(raw, label, chunk_size=8192, window_size=4096, sr=22050, n_mfcc=16, n_frame=16):
+def mfcc4(raw, chunk_size=8192, window_size=4096, sr=22050, n_mfcc=16, n_frame=16):
     mfcc = np.empty((0, n_mfcc, n_frame))
-    y = []
     print(raw.shape)
     for i in range(0, len(raw), chunk_size//2):
         mfcc_slice = librosa.feature.mfcc(raw[i:i+chunk_size], sr=sr, n_mfcc=n_mfcc) #n_mfcc,17
@@ -29,14 +25,12 @@ def mfcc4(raw, label, chunk_size=8192, window_size=4096, sr=22050, n_mfcc=16, n_
         mfcc_slice = mfcc_slice[:,:-1]
         mfcc_slice = mfcc_slice.reshape((1, mfcc_slice.shape[0], mfcc_slice.shape[1]))
         mfcc = np.vstack((mfcc, mfcc_slice))
-        y.append(label)
-    y = np.array(y)
-    return mfcc, y
+    return mfcc
 
 
 # Extraction function
 def extraction(raw):
-    soundData, _ = mfcc4(raw, 0)  # Get MFCC from raw data
+    soundData = mfcc4(raw)  # Get MFCC from raw data
 
     # Reshape dataset (?, 16,16) => (?, 256)
     dataX = np.reshape(soundData, (soundData.shape[0], -1))
@@ -88,5 +82,5 @@ def getDetectionResult():
     dataX = extraction(raw)
     print("Feature is extracted")
     y_pred = sess.run(tf.argmax(logits,1),feed_dict={X: dataX, keep_prob: 1})
-    print("Process is finished")
+    print("Process is finished\n")
     return y_pred
