@@ -26,7 +26,7 @@ class Audio:
         
         p = pyaudio.PyAudio()
         stream = p.open(format=AUDIO_FORMAT, channels=1, rate=SAMPLE_RATE,
-        input=True, frames_per_buffer=CHUNK_SIZE)
+        input=True, frames_per_buffer=CHUNK_SIZE, input_device_index=0, output_device_index =0 )
         
         frame = []    
         t1 = time.time()

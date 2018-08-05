@@ -1,2 +1,2 @@
-model_checkpoint_path: "my_RNN_model"
-all_model_checkpoint_paths: "my_RNN_model"
+model_checkpoint_path: "my_RNN_model_test"
+all_model_checkpoint_paths: "my_RNN_model_test"
