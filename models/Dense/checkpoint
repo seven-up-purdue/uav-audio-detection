@@ -1,0 +1,2 @@
+model_checkpoint_path: "C:/Users/Jaesung/Desktop/\354\275\224\353\224\251/Python\354\213\244\354\212\265/K-SW-PJT/GIt/uav-audio-detection/models/Dense/my_test_model_dense"
+all_model_checkpoint_paths: "C:/Users/Jaesung/Desktop/\354\275\224\353\224\251/Python\354\213\244\354\212\265/K-SW-PJT/GIt/uav-audio-detection/models/Dense/my_test_model_dense"
