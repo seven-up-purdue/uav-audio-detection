@@ -59,7 +59,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 ### Model loading part ###
 sess = tf.Session()
 saver = tf.train.Saver()
-saver.restore(sess, './cnnmodel')
+saver.restore(sess, './CNN/cnnmodel')
 
 def getDetectionResult():
     print("Start Process")
