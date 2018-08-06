@@ -73,14 +73,22 @@ optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 sess = tf.Session()
 saver = tf.train.Saver()
-saver.restore(sess, './my_test_model_cnn')
+saver.restore(sess, './my_test_model_dense')
 
-def getDetectionResult():
-    print("Start Process")
-    raw = Audio.getStream(sample_rate = 22050, chunk_size = 8192, chunk_num = 1, isWrite=True)
-    print("\nRaw data is created")
-    dataX = extraction(raw)
-    print("Feature is extracted")
+def getDetectionResult(sound):
+    #raw = Audio.getStream(sample_rate = 22050, chunk_size = 8192, chunk_num = 1, isWrite=True)
+    dataX = extraction(sound)
     y_pred = sess.run(tf.argmax(logits,1),feed_dict={X: dataX, keep_prob: 1})
-    print("Process is finished\n")
-    return y_pred
+    counts = np.bincount(y_pred)
+    result =  np.argmax(counts)
+    
+    if result == 0:
+        rs = 0
+        print(' 드론-Unload-',result)
+    elif result == 1:
+        rs = 1
+        print(' 드론-Load-',result)
+    else :
+        rs = 0
+        print(' None-',result)
+    return rs
