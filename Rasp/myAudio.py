@@ -49,6 +49,6 @@ class Audio:
             wf.setframerate(SAMPLE_RATE)
             wf.writeframes(b''.join(audio))
             
-        print("time: %.4f \t"%(t2-t1),end='')
+        #print("time: %.4f \t"%(t2-t1),end='')
     
         return audio[:]/32768
